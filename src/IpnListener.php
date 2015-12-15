@@ -55,7 +55,7 @@ class IpnListener
     public $verify_ssl = true;
 
     private $_errors = array();
-    private $post_data;
+    private $post_data = array();
     private $rawPostData;				// raw data from php://input
     private $post_uri = '';
     private $response_status = '';
@@ -233,7 +233,6 @@ class IpnListener
      */
     public function getTextReport()
     {
-
         $r = '';
 
         // date and POST url
@@ -253,9 +252,13 @@ class IpnListener
         for ($i=0; $i<80; $i++) { $r .= '-'; }
         $r .= "\n";
 
-        foreach ($this->post_data as $key => $value) {
-            $r .= str_pad($key, 25)."$value\n";
-        }
+		if (!is_array($this->post_data))
+			$r .= print_r($this->post_data, true);
+		else
+			foreach ($this->post_data as $key => $value) {
+				$r .= str_pad($key, 25)."$value\n";
+			}
+			
         $r .= "\n\n";
 
         return $r;
