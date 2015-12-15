@@ -54,7 +54,6 @@ class IpnListener
      */
     public $verify_ssl = true;
 
-    private $_errors = array();
     private $post_data = array();
     private $rawPostData;				// raw data from php://input
     private $post_uri = '';
@@ -162,16 +161,6 @@ class IpnListener
         return ($this->use_sandbox) ? self::SANDBOX_HOST : self::PAYPAL_HOST;
     }
 
-    public function getErrors()
-    {
-        return $this->_errors;
-    }
-
-    private function addError($error)
-    {
-        $this->_errors[] .= $error;
-    }
-
     public function getPostData()
     {
         return $this->post_data;
@@ -272,14 +261,12 @@ class IpnListener
      *  back as "VERIFIED", false if the response came back "INVALID", and
      *  throws an exception if there is an error.
      *
-     *  @param array
-     *
+     *  @param array|null
      *  @return boolean
+	 *  @throws Exception
      */
     public function processIpn($post_data=null)
     {
-        try
-        {
             $this->requirePostMethod();		// processIpn() should check itself if data is POST
 
             // Read POST data
@@ -342,11 +329,6 @@ class IpnListener
             } else {
                 throw new Exception("Unexpected response from PayPal.");
             }
-        } catch (Exception $e) {
-            $this->addError($e->getMessage());
-            return false;
-        }
-        return false;
     }
 
     /**
