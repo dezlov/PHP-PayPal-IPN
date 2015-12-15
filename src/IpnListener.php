@@ -371,8 +371,10 @@ class IpnListener
      */
     public function requirePostMethod()
     {
-        // require POST requests
-        if ($_SERVER['REQUEST_METHOD'] && $_SERVER['REQUEST_METHOD'] != 'POST') {
+		// Cannot use filter_input(INPUT_SERVER) due to a buggy behaviour of PHP.
+		$method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : null;
+        if ($method != 'POST')
+		{
             header('Allow: POST', true, 405);
             throw new Exception("Invalid HTTP request method.");
         }
