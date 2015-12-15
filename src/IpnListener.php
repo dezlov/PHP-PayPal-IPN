@@ -331,6 +331,30 @@ class IpnListener
             }
     }
 
+	/**
+	 * Process IPN by calling <code>processIpn()</code> but catch the exception
+	 * if error occurs and return it in the <code>$error</code> parameter.
+	 * 
+	 * @param array|null $post_data
+	 * @param string $error Populated with an error message.
+	 * @return boolean
+	 */
+	public function tryProcessIpn($post_data=null, &$error=null)
+	{
+		try
+		{
+			$valid = $this->processIpn($post_data);
+			if (!$valid)
+				$error = 'Invalid IPN request.';
+			return $valid;
+		}
+		catch (Exception $e)
+		{
+			$error = $e->getMessage();
+			return false;
+		}
+	}
+
     /**
      *  Require Post Method
      *
