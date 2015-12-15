@@ -54,6 +54,14 @@ class IpnListener
      */
     public $verify_ssl = true;
 
+	/**
+	 * Require that POST method is used when processing an IPN request from POST data.
+	 * Exception is thrown if this check has failed. Default is TRUE.
+	 *
+	 * @var boolean
+	 */
+	public $requirePostMethod = true;
+
     private $post_data = array();
     private $rawPostData;				// raw data from php://input
     private $post_uri = '';
@@ -267,12 +275,12 @@ class IpnListener
      */
     public function processIpn($post_data=null)
     {
-            $this->requirePostMethod();		// processIpn() should check itself if data is POST
-
             // Read POST data
             // reading posted data directly from $_POST causes serialization
             // issues with array data in POST. Reading raw POST data from input stream instead.
             if ($post_data === null) {
+				if ($this->requirePostMethod)
+					$this->requirePostMethod();
                 $raw_post_data = file_get_contents('php://input');
             } else {
                 $raw_post_data = $post_data;
