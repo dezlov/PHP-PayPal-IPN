@@ -174,14 +174,53 @@ class IpnListener
 		return ($this->use_sandbox) ? self::SANDBOX_HOST : self::PAYPAL_HOST;
 	}
 
-	public function getPostData()
+	/**
+	 * Get a value of a variable from processed IPN data. If variable name is
+	 * not specified, the full data set is returned as an associative array.
+	 * @param string $variable Variable name. If NULL, full data set is returned.
+	 *   Default is NULL.
+	 * @param mixed $default Default value to be returned if variable does not exist.
+	 *   Default is NULL.
+	 * @return string|array
+	 */
+	public function getData($variable=null, $default=null)
 	{
-		return $this->postData;
+		if ($variable === null)
+			return $this->postData;
+		else if (isset($this->postData[$variable]))
+			return $this->postData[$variable];
+		else
+			return $default;
 	}
 
-	public function getRawPostData()
+	/**
+	 * Get raw data from processed IPN.
+	 * Can be useful for debugging purposes.
+	 * @return string
+	 */
+	public function getRawData()
 	{
 		return $this->rawPostData;
+	}
+
+	/**
+	 * Get parsed data from processed IPN.
+	 * @deprecated Deprecated, use <code>getData()</code> instead.
+	 * @return array
+	 */
+	public function getPostData()
+	{
+		return $this->getData();
+	}
+
+	/**
+	 * Get raw data from processed IPN.
+	 * @deprecated Deprecated, use <code>getRawData()</code> instead.
+	 * @return string
+	 */
+	public function getRawPostData()
+	{
+		return $this->getRawData();
 	}
 
 	/**
