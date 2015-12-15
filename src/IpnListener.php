@@ -61,8 +61,8 @@ class IpnListener
 	 */
 	public $requirePostMethod = true;
 
-	private $post_data = array();
-	private $rawPostData;				// raw data from php://input
+	private $postData = array();
+	private $rawPostData = null;
 	private $post_uri = '';
 	private $response_status = '';
 	private $response = '';
@@ -176,7 +176,7 @@ class IpnListener
 
 	public function getPostData()
 	{
-		return $this->post_data;
+		return $this->postData;
 	}
 
 	public function getRawPostData()
@@ -253,10 +253,10 @@ class IpnListener
 		for ($i=0; $i<80; $i++) { $r .= '-'; }
 		$r .= "\n";
 
-		if (!is_array($this->post_data))
-			$r .= print_r($this->post_data, true);
+		if (!is_array($this->postData))
+			$r .= print_r($this->postData, true);
 		else
-			foreach ($this->post_data as $key => $value)
+			foreach ($this->postData as $key => $value)
 				$r .= str_pad($key, 25)."$value\n";
 
 		$r .= "\n\n";
@@ -265,82 +265,66 @@ class IpnListener
 	}
 
 	/**
-	 *  Process IPN
+	 * Process an Instant Payment Notification (IPN).
+	 * 
+	 *   1. Load POST data or data supplied via <code>$custom_data</code>.
+	 *   2. Generate and submit a validation request for PayPal.
+	 *   3. Parse the response from PayPal.
+	 * 
+	 * Call this method from your IPN listener script.
 	 *
-	 *  Handles the IPN post back to PayPal and parsing the response. Call this
-	 *  method from your IPN listener script. Returns true if the response came
-	 *  back as "VERIFIED", false if the response came back "INVALID", and
-	 *  throws an exception if there is an error.
-	 *
-	 *  @param array|null
-	 *  @return boolean
-	 *  @throws Exception
+	 * @param mixed $custom_data Custom supplied data in a form of
+	 *   a query string or an associative array. If NULL, POST data is used.
+	 *   Default is NULL.
+	 * @return boolean Returns TRUE if the response came back as "VERIFIED",
+	 *   FALSE if the response came back as "INVALID", and throws an exception
+	 *   if there was an error.
+	 * @throws Exception
 	 */
-	public function processIpn($post_data=null)
+	public function processIpn($custom_data=null)
 	{
-		// Read POST data
-		// reading posted data directly from $_POST causes serialization
-		// issues with array data in POST. Reading raw POST data from input stream instead.
-		if ($post_data === null)
+		// Load POST data (avoid use of $_POST superglobal)
+		if ($custom_data === null)
 		{
 			if ($this->requirePostMethod)
 				$this->requirePostMethod();
-			$raw_post_data = file_get_contents('php://input');
+			$this->rawPostData = file_get_contents('php://input');
+			$this->postData = $this->decodeQueryString($this->rawPostData);
 		}
+		// Load custom data as an associative array
+		else if (is_array($custom_data))
+		{
+			$this->postData = $custom_data;
+			$this->rawPostData = $this->encodeQueryString($this->postData);
+		}
+		// Load custom data as a query string
 		else
 		{
-			$raw_post_data = $post_data;
-		}
-		$this->rawPostData = $raw_post_data;							// set raw post data for Class use
-
-		// if post_data is php input stream, make it an array.
-		if ( ! is_array($raw_post_data) )
-		{
-			$raw_post_array = explode('&', $raw_post_data);
-			$this->post_data = $raw_post_array;								// use post array because it's same as $_POST
-		}
-		else
-		{
-			$this->post_data = $raw_post_data;								// use post array because it's same as $_POST
+			$this->rawPostData = $custom_data;
+			$this->postData = $this->decodeQueryString($this->rawPostData);
 		}
 
-		$myPost = array();
-		if (isset($raw_post_array))
-		{
-			foreach ($raw_post_array as $keyval)
-			{
-				$keyval = explode('=', $keyval);
-				if (count($keyval) == 2)
-					$myPost[$keyval[0]] = urldecode($keyval[1]);
-			}
-		}
+		// Generate request data to be sent to PayPal. Use the original
+		// raw data string to avoid potential validation failure due to
+		// encoding/decoding differences between client and server.
+		$request_qeury = 'cmd=_notify-validate'.'&'.$this->rawPostData;
 
-		// read the post from PayPal system and add 'cmd'
-		$req = 'cmd=_notify-validate';
-
-		foreach ($myPost as $key => $value)
-		{
-			if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() == 1)
-				$value = urlencode(stripslashes($value));
-			else
-				$value = urlencode($value);
-			$req .= "&$key=$value";
-		}
-
+		// Submit request to PayPal and get response.
 		if ($this->use_curl)
-			$res = $this->curlPost($req);
+			$response = $this->curlPost($request_qeury);
 		else
-			$res = $this->fsockPost($req);
+			$response = $this->fsockPost($request_qeury);
 
-		if (strpos($res, '200') === false)
-			throw new Exception("Invalid response status: " . $res);
+		// Check response HTTP status code
+		if (strpos($response, '200') === false)
+			throw new Exception("Invalid response status: " . $response);
 
 		// Split response headers and payload, a better way for strcmp
-		$tokens = explode("\r\n\r\n", trim($res));
-		$res = trim(end($tokens));
-		if (strcmp ($res, "VERIFIED") == 0)
+		$tokens = explode("\r\n\r\n", trim($response));
+		$response = trim(end($tokens));
+		if (strcmp ($response, "VERIFIED") == 0)
 			return true;
-		else if (strcmp ($res, "INVALID") == 0)
+		else if (strcmp ($response, "INVALID") == 0)
 			return false;
 		else
 			throw new Exception("Unexpected response from PayPal.");
@@ -350,15 +334,15 @@ class IpnListener
 	 * Process IPN by calling <code>processIpn()</code> but catch the exception
 	 * if error occurs and return it in the <code>$error</code> parameter.
 	 *
-	 * @param array|null $post_data
+	 * @param mixed $custom_data
 	 * @param string $error Populated with an error message.
 	 * @return boolean
 	 */
-	public function tryProcessIpn($post_data=null, &$error=null)
+	public function tryProcessIpn($custom_data=null, &$error=null)
 	{
 		try
 		{
-			$valid = $this->processIpn($post_data);
+			$valid = $this->processIpn($custom_data);
 			if (!$valid)
 				$error = 'Invalid IPN request.';
 			return $valid;
@@ -387,4 +371,49 @@ class IpnListener
 		}
 	}
 
+	/**
+	 * Encode an associative array into a query string.
+	 * Optionally, add a question mark (?) at the beginning of the query string.
+	 * @param array $data
+	 * @param boolean $addQuestionMark
+	 * @return string
+	 */
+	public static function encodeQueryString(array $data, $addQuestionMark=false)
+	{
+		$query = http_build_query($data);
+		if ($addQuestionMark)
+			$query = '?'.$query;
+		return $query;
+	}
+
+	/**
+	 * Decode a query string into an associative array with URL-decoded values.
+	 * Returned data mymics the structure of <code>$_GET</code> and
+	 * <code>$_POST</code> superglobals. Function automatically strips the
+	 * question mark (?) at the beginning of the query string.
+	 * @param string $query Query string.
+	 * @return array
+	 */
+	public static function decodeQueryString($query)
+	{
+		// Strip '?' sign at the begining, if it exists
+		if (strlen($query) > 0)
+			if (substr($query, 0, 1) == '?')
+				$query = substr($query, 1);
+
+		// Break down query string into associative array
+		$data = array();
+		$parts = explode('&', $query);
+		foreach ($parts as $keyval)
+		{
+			$keyval = explode('=', $keyval);
+			if (count($keyval) == 2)
+			{
+				list($key, $value) = $keyval;
+				$data[$key] = urldecode($value);
+			}
+		}
+		
+		return $data;
+	}
 }
