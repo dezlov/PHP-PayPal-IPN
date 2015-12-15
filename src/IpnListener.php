@@ -14,7 +14,6 @@ use Exception;
  */
 class IpnListener
 {
-
 	/**
 	 *  If true, the recommended cURL PHP library is used to send the post back
 	 *  to PayPal. If flase then fsockopen() is used. Default true.
@@ -90,7 +89,8 @@ class IpnListener
 
 		$ch = curl_init();
 
-		if ($this->verify_ssl) {
+		if ($this->verify_ssl)
+		{
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 			curl_setopt($ch, CURLOPT_CAINFO, dirname(dirname(__FILE__)) . '/cert/api_cert_chain.crt');
@@ -107,7 +107,8 @@ class IpnListener
 		$this->response = curl_exec($ch);
 		$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-		if ($this->response === false || $this->response_status == '0') {
+		if ($this->response === false || $this->response_status == '0')
+		{
 			$errno = curl_errno($ch);
 			$errstr = curl_error($ch);
 			throw new Exception("cURL error: [$errno] $errstr");
@@ -130,14 +131,14 @@ class IpnListener
 	 */
 	protected function fsockPost($encoded_data)
 	{
-
 		$uri = 'ssl://'.$this->getPaypalHost();
 		$port = '443';
 		$this->post_uri = $uri.'/cgi-bin/webscr';
 
 		$fp = fsockopen($uri, $port, $errno, $errstr, $this->timeout);
 
-		if (!$fp) {
+		if (!$fp)
+		{
 			// fsockopen error
 			throw new Exception("fsockopen error: [$errno] $errstr");
 		}
@@ -150,12 +151,16 @@ class IpnListener
 
 		fputs($fp, $header.$encoded_data."\r\n\r\n");
 
-		while(!feof($fp)) {
-			if (empty($this->response)) {
+		while(!feof($fp))
+		{
+			if (empty($this->response))
+			{
 				// extract HTTP status from first line
 				$this->response .= $status = fgets($fp, 1024);
 				$this->response_status = trim(substr($status, 9, 4));
-			} else {
+			}
+			else
+			{
 				$this->response .= fgets($fp, 1024);
 			}
 		}
@@ -235,11 +240,10 @@ class IpnListener
 		// date and POST url
 		for ($i=0; $i<80; $i++) { $r .= '-'; }
 		$r .= "\n[".date('m/d/Y g:i A').'] - '.$this->getPostUri();
-		if ($this->use_curl) {
+		if ($this->use_curl)
 			$r .= " (curl)\n";
-		} else {
+		else
 			$r .= " (fsockopen)\n";
-		}
 
 		// HTTP Response
 		for ($i=0; $i<80; $i++) { $r .= '-'; }
@@ -252,9 +256,8 @@ class IpnListener
 		if (!is_array($this->post_data))
 			$r .= print_r($this->post_data, true);
 		else
-			foreach ($this->post_data as $key => $value) {
+			foreach ($this->post_data as $key => $value)
 				$r .= str_pad($key, 25)."$value\n";
-			}
 
 		$r .= "\n\n";
 
@@ -278,65 +281,69 @@ class IpnListener
 		// Read POST data
 		// reading posted data directly from $_POST causes serialization
 		// issues with array data in POST. Reading raw POST data from input stream instead.
-		if ($post_data === null) {
+		if ($post_data === null)
+		{
 			if ($this->requirePostMethod)
 				$this->requirePostMethod();
 			$raw_post_data = file_get_contents('php://input');
-		} else {
+		}
+		else
+		{
 			$raw_post_data = $post_data;
 		}
 		$this->rawPostData = $raw_post_data;							// set raw post data for Class use
 
 		// if post_data is php input stream, make it an array.
-		if ( ! is_array($raw_post_data) ) {
+		if ( ! is_array($raw_post_data) )
+		{
 			$raw_post_array = explode('&', $raw_post_data);
 			$this->post_data = $raw_post_array;								// use post array because it's same as $_POST
-		} else {
+		}
+		else
+		{
 			$this->post_data = $raw_post_data;								// use post array because it's same as $_POST
 		}
 
 		$myPost = array();
-		if (isset($raw_post_array)) {
-			foreach ($raw_post_array as $keyval) {
+		if (isset($raw_post_array))
+		{
+			foreach ($raw_post_array as $keyval)
+			{
 				$keyval = explode('=', $keyval);
-				if (count($keyval) == 2) {
+				if (count($keyval) == 2)
 					$myPost[$keyval[0]] = urldecode($keyval[1]);
-				}
 			}
 		}
 
 		// read the post from PayPal system and add 'cmd'
 		$req = 'cmd=_notify-validate';
 
-		foreach ($myPost as $key => $value) {
-			if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() == 1) {
+		foreach ($myPost as $key => $value)
+		{
+			if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() == 1)
 				$value = urlencode(stripslashes($value));
-			} else {
+			else
 				$value = urlencode($value);
-			}
 			$req .= "&$key=$value";
 		}
 
-		if ($this->use_curl) {
+		if ($this->use_curl)
 			$res = $this->curlPost($req);
-		} else {
+		else
 			$res = $this->fsockPost($req);
-		}
 
-		if (strpos($res, '200') === false) {
+		if (strpos($res, '200') === false)
 			throw new Exception("Invalid response status: " . $res);
-		}
 
 		// Split response headers and payload, a better way for strcmp
 		$tokens = explode("\r\n\r\n", trim($res));
 		$res = trim(end($tokens));
-		if (strcmp ($res, "VERIFIED") == 0) {
+		if (strcmp ($res, "VERIFIED") == 0)
 			return true;
-		} else if (strcmp ($res, "INVALID") == 0) {
+		else if (strcmp ($res, "INVALID") == 0)
 			return false;
-		} else {
+		else
 			throw new Exception("Unexpected response from PayPal.");
-		}
 	}
 
 	/**
