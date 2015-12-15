@@ -1,31 +1,36 @@
 {
-    "name": "wadeshuler/php-paypal-ipn",
-    "description": "Forked, Fixed, and Updated on 2-3-2015. A class to listen for and handle Instant Payment Notifications (IPN) from the PayPal server.",
-    "homepage": "https://github.com/WadeShuler/PHP-PayPal-IPN",
-    "keywords": ["paypal", "ipn", "php"],
-    "license": "GPL-2.0+",
-    "version": "2.5.2",
-    "authors": [
-        {
-            "name": "Wade Shuler",
-            "homepage": "https://github.com/WadeShuler/"
-        },
-        {
-            "name": "Micah Carrick",
-            "homepage": "https://github.com/Quixotix/",
-            "role": "Original Author"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/WadeShuler/PHP-PayPal-IPN/issues",
-        "source": "https://github.com/WadeShuler/PHP-PayPal-IPN/"
-    },
-    "require": {
-        "php": ">=5.3.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "wadeshuler\\paypalipn\\": "src/"
-        }
-    }
+	"name": "dezlov/PHP-PayPal-IPN",
+	"description": "A class for handling Instant Payment Notifications (IPN) from PayPal.",
+	"homepage": "https://github.com/dezlov/PHP-PayPal-IPN",
+	"keywords": ["paypal", "ipn", "php"],
+	"license": "GPL-2.0+",
+	"authors": [
+		{
+			"name": "Denis Kozlov",
+			"homepage": "https://github.com/dezlov/",
+			"role": "Current Maintainer"
+		},
+		{
+			"name": "Wade Shuler",
+			"homepage": "https://github.com/WadeShuler/",
+			"role": "Forked Author (up to v2.5.2)"
+		},
+		{
+			"name": "Micah Carrick",
+			"homepage": "https://github.com/Quixotix/",
+			"role": "Original Author (up to v2.1.0)"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/dezlov/PHP-PayPal-IPN/issues",
+		"source": "https://github.com/dezlov/PHP-PayPal-IPN/"
+	},
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"dezlov\\PayPal\\": "src/"
+		}
+	}
 }

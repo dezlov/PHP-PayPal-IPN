@@ -1,26 +1,16 @@
 <?php
 
-namespace wadeshuler\paypalipn;
+namespace dezlov\PayPal;
 
 use Exception;
 
 /**
- *  PayPal IPN Listener
- *
- *  A class to listen for and handle Instant Payment Notifications (IPN) from
- *  the PayPal server.
- *
- *  Forked from the great Quixotix PayPal IPN script. This fork plans to
- *  fix the current issues with the original repo, as well as update the code
- *  for use according to PayPal's documentation, and today's standards.
+ *  A class for handling Instant Payment Notifications (IPN) from PayPal.
  *
  *  @package    PHP-PayPal-IPN
- *  @link       https://github.com/WadeShuler/PHP-PayPal-IPN
- *  @forked     https://github.com/Quixotix/PHP-PayPal-IPN
- *  @author     Wade Shuler
- *  @copyright  Copyright (c) 2015, Wade Shuler
+ *  @link       https://github.com/dezlov/PHP-PayPal-IPN
+ *  @author     Denis Kozlov
  *  @license    http://choosealicense.com/licenses/gpl-2.0/
- *  @version    2.5.2
  */
 class IpnListener
 {
