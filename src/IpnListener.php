@@ -266,39 +266,37 @@ class IpnListener
 	/**
 	 *  Get Text Report
 	 *
-	 *  Returns a report of the IPN transaction in plain text format. This is
-	 *  useful in emails to order processors and system administrators. Override
-	 *  this method in your own class to customize the report.
+	 *  Returns a report of the IPN transaction in plain text format.
+	 *  This is useful in emails to order processors and system administrators.
 	 *
 	 *  @return string
 	 */
 	public function getTextReport()
 	{
 		$r = '';
+		$nl = PHP_EOL;
+		$line = str_repeat('-', 80);
 
-		// date and POST url
-		for ($i=0; $i<80; $i++) { $r .= '-'; }
-		$r .= "\n[".date('m/d/Y g:i A').'] - '.$this->getPostUri();
+		// Current date and POST url
+		$r .= $line.$nl;
+		$r .= '['.date('m/d/Y g:i A').'] - '.$this->getPostUri();
 		if ($this->use_curl)
-			$r .= " (curl)\n";
+			$r .= ' (curl)'.$nl;
 		else
-			$r .= " (fsockopen)\n";
+			$r .= ' (fsockopen)'.$nl;
 
-		// HTTP Response
-		for ($i=0; $i<80; $i++) { $r .= '-'; }
-		$r .= "\n{$this->getResponse()}\n";
+		// HTTP response
+		$r .= $line.$nl;
+		$r .= $this->getResponse().$nl;
 
-		// POST vars
-		for ($i=0; $i<80; $i++) { $r .= '-'; }
-		$r .= "\n";
-
+		// IPN data
+		$r .= $line.$nl;
 		if (!is_array($this->postData))
 			$r .= print_r($this->postData, true);
 		else
 			foreach ($this->postData as $key => $value)
-				$r .= str_pad($key, 25)."$value\n";
-
-		$r .= "\n\n";
+				$r .= str_pad($key, 25).$value.$nl;
+		$r .= $line.$nl;
 
 		return $r;
 	}
