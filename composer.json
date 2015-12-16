@@ -28,6 +28,9 @@
 	"require": {
 		"php": ">=5.3.0"
 	},
+	"suggest": {
+		"ext-curl": "Network communication library which will enable additional features."
+	},
 	"autoload": {
 		"psr-4": {
 			"dezlov\\PayPal\\": "src/"
