@@ -20,27 +20,28 @@ Requirements:
 Documentation
 -------------
 
-The source code contains PHPDoc style comments which should be used as the primary reference.
+The source code contains PHPDoc style comments which essentially provide a function reference.
 
-Example scripts and a sample report (as returned by the `getTextReport()` method) can be found in the [Examples](examples/) folder.
+Example scripts ranging from basic IPN verification to a complete order processing chain, and a sample report as returned by the `getTextReport()` method, can be found in the [Examples](examples/) folder.
 
 ### Getting Started
 
-This code is intended for web developers. You should understand how the IPN process works conceptually and you should understand when and why you would be using IPN. Reading the [PayPal Instant Payment Notification Guide][1] is a good place to start.
+You should understand how the IPN process works conceptually and you should understand when and why you would be using IPN. Reading the [PayPal Instant Payment Notification Guide][1] is a good place to start.
 
-You should also have a [PayPal Sandbox Account][2] with a test buyer account and a test seller account. When logged into your sandbox account there is an IPN simulator under the "Test Tools" menu which you can used to test your IPN listener.
+You should also have a [PayPal Sandbox Account][2] with a test buyer account and a test seller account. When logged into your sandbox account there is an IPN simulator under the "Test Tools" menu which you can use to test your IPN listener.
 
 Once you have your sandbox account setup, you simply create a PHP script that will be your IPN listener. In that script, use the `IpnListener()` class as demonstrated in the [Examples](examples/).
 
-An in-depth tutorial [PayPal IPN with PHP](http://www.micahcarrick.com/paypal-ipn-with-php.html) descibes how to implement an Instant Payment Notification listener script in PHP - a must-read if you had no prior experience with PayPal IPN.
+Also consider reading this [in-depth tutorial][3] about the IPN process and how to implementing an IPN listener script in PHP.
 
-[1]: https://cms.paypal.com/cms_content/US/en_US/files/developer/IPNGuide.pdf
+[1]: https://developer.paypal.com/webapps/developer/docs/classic/products/instant-payment-notification/
 [2]: https://developer.paypal.com
+[3]: http://www.micahcarrick.com/paypal-ipn-with-php.html
 
 History
 -------
 
-This library was forked from [WadeShuler/PHP-PayPal-IPN](https://github.com/WadeShuler/PHP-PayPal-IPN) v2.5.2 which in turn was forked from [Quixotix/PHP-PayPal-IPN](https://github.com/Quixotix/PHP-PayPal-IPN) v2.1.0.
+This library was forked from [WadeShuler/PHP-PayPal-IPN](https://github.com/WadeShuler/PHP-PayPal-IPN) (v2.5.2) which in turn was forked from [Quixotix/PHP-PayPal-IPN](https://github.com/Quixotix/PHP-PayPal-IPN) (v2.1.0).
 
 Below is a brief summary of their differences and reasons for forking:
 
