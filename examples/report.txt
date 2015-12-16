@@ -1,0 +1,63 @@
+--------------------------------------------------------------------------------
+Wed, 16 Dec 2015 15:00:47 +0100
+https://www.sandbox.paypal.com/cgi-bin/webscr
+(curl, sandbox, verify ssl, no follow, timeout 30)
+--------------------------------------------------------------------------------
+HTTP/1.1 200 OK
+Date: Wed, 16 Dec 2015 14:00:46 GMT
+Server: Apache
+X-Frame-Options: SAMEORIGIN
+Set-Cookie: c9MWDuvPtT9GIMyPc3jwol1VSlO=KIr5vIUI6OIkYhGLYLxPuwGtYHdVptTRsPDm3zd-FrPm0E4LqFk2xkU60zgbj53mdHh4ZJoZ9Qx5wu--mPD6135-p1G_3PUs_aZBebnVNeKNMmbpqCBCc80RP_fNLd0yi4AkIbRC7zMYZSrHmEUbG2rFdm95FW4k32SskNswqKoLBnXeBwQ5RhG6tZx8P0SRUxrTu1cBt7SyQnB5fXcAy20UBwqb6vaEYZ3SVRpQ9_UY62Z8TDhcPt6GO8Ise8zDK5U8MeviHHTMRDqP9P7xu62eC2hvlb43k0r3zcbGHca9x7wjW331d_NnUIUOP-Vvx3NaiA1cTYFZk0ts0C0Y3D5JrDb1vpJY_onNixLbflPdCEAw15b25mabM3Z7zUEgXChT7BfzNjWkBGoo0ZqWEXou7BLciH_XHfPrM1035DqxUvrJG-OE73JC_Iq; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: cookie_check=yes; expires=Sat, 13-Dec-2025 14:00:46 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navcmd=_notify-validate; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: navlns=0.0; expires=Fri, 15-Dec-2017 14:00:46 GMT; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: Apache=10.72.108.11.1450274446683738; path=/; expires=Fri, 08-Dec-45 14:00:46 GMT
+Vary: Accept-Encoding,User-Agent
+X-Cnection: close
+Paypal-Debug-Id: bf6b5176a2d5d
+Set-Cookie: X-PP-SILOVER=name%3DSANDBOX3.WEB.1%26silo_version%3D880%26app%3Dappdispatcher%26TIME%3D2389602646; domain=.paypal.com; path=/; Secure; HttpOnly
+Set-Cookie: X-PP-SILOVER=; Expires=Thu, 01 Jan 1970 00:00:01 GMT
+Set-Cookie: Apache=10.72.128.11.1450274446666808; path=/; expires=Fri, 08-Dec-45 14:00:46 GMT
+Strict-Transport-Security: max-age=14400
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=UTF-8
+
+VERIFIED
+--------------------------------------------------------------------------------
+payment_type             instant
+payment_date             Wed Dec 16 2015 14:00:41 GMT+0000 (GMT Standard Time)
+payment_status           Pending
+address_status           confirmed
+payer_status             verified
+first_name               John
+last_name                Smith
+payer_email              buyer@paypalsandbox.com
+payer_id                 TESTBUYERID01
+address_name             John Smith
+address_country          United States
+address_country_code     US
+address_zip              95131
+address_state            CA
+address_city             San Jose
+address_street           123 any street
+business                 seller@paypalsandbox.com
+receiver_email           seller@paypalsandbox.com
+receiver_id              seller@paypalsandbox.com
+residence_country        US
+item_name                something
+item_number              AK-1234
+quantity                 1
+shipping                 3.04
+tax                      2.02
+mc_currency              USD
+mc_fee                   0.44
+mc_gross                 12.34
+mc_gross1                12.34
+txn_type                 web_accept
+txn_id                   892279818
+notify_version           2.1
+custom                   xyz123
+invoice                  abc1234
+test_ipn                 1
+verify_sign              AfxaVPetU6BwF9PAciVWAiSKfIe6AyjQbHK57.KWkJObXJYnjKHS5ecB
+--------------------------------------------------------------------------------
