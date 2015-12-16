@@ -78,6 +78,7 @@ class IpnListener
 
 	const PAYPAL_HOST = 'www.paypal.com';
 	const SANDBOX_HOST = 'www.sandbox.paypal.com';
+	const TARGET_URI_PATH = '/cgi-bin/webscr';
 
 	/**
 	 * Default path to Certificate Authority (CA) bundle file.
@@ -113,8 +114,10 @@ class IpnListener
 	 */
 	protected function curlPost($encoded_data)
 	{
-		$uri = 'https://'.$this->getPaypalHost().'/cgi-bin/webscr';
-		$this->post_uri = $uri;
+		$host = $this->getTargetHost();
+		$path = self::TARGET_URI_PATH;
+		$url = 'https://'.$host.$path;
+		$this->post_uri = $url;
 
 		$ch = curl_init();
 
@@ -125,7 +128,7 @@ class IpnListener
 			curl_setopt($ch, CURLOPT_CAINFO, $this->getCertificateBundlePath());
 		}
 
-		curl_setopt($ch, CURLOPT_URL, $uri);
+		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded_data);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $this->follow_location);
@@ -160,11 +163,13 @@ class IpnListener
 	 */
 	protected function fsockPost($encoded_data)
 	{
-		$uri = 'ssl://'.$this->getPaypalHost();
+		$host = $this->getTargetHost();
+		$path = self::TARGET_URI_PATH;
+		$fsockhost = 'ssl://'.$host;
 		$port = '443';
-		$this->post_uri = $uri.'/cgi-bin/webscr';
+		$this->post_uri = $fsockhost.':'.$port.$path;
 
-		$fp = fsockopen($uri, $port, $errno, $errstr, $this->timeout);
+		$fp = fsockopen($fsockhost, $port, $errno, $errstr, $this->timeout);
 
 		if (!$fp)
 		{
@@ -172,8 +177,8 @@ class IpnListener
 			throw new Exception("fsockopen error: [$errno] $errstr");
 		}
 
-		$header = "POST /cgi-bin/webscr HTTP/1.1\r\n";
-		$header .= "Host: ".$this->getPaypalHost()."\r\n";
+		$header = "POST ".$path." HTTP/1.1\r\n";
+		$header .= "Host: ".$host."\r\n";
 		$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 		$header .= "Content-Length: ".strlen($encoded_data)."\r\n";
 		$header .= "Connection: Close\r\n\r\n";
@@ -198,7 +203,7 @@ class IpnListener
 		return $this->response;
 	}
 
-	private function getPaypalHost()
+	private function getTargetHost()
 	{
 		return ($this->use_sandbox) ? self::SANDBOX_HOST : self::PAYPAL_HOST;
 	}
@@ -255,9 +260,8 @@ class IpnListener
 	/**
 	 *  Get POST URI
 	 *
-	 *  Returns the URI that was used to send the post back to PayPal. This can
-	 *  be useful for troubleshooting connection problems. The default URI
-	 *  would be "ssl://www.sandbox.paypal.com:443/cgi-bin/webscr"
+	 *  Returns the URI that was used to send the post back to PayPal.
+	 *  This can be useful for troubleshooting connection problems.
 	 *
 	 *  @return string
 	 */
