@@ -41,14 +41,15 @@ Also consider reading this [in-depth tutorial][3] about the IPN process and how 
 History
 -------
 
-This library was forked from [WadeShuler/PHP-PayPal-IPN](https://github.com/WadeShuler/PHP-PayPal-IPN) (v2.5.2) which in turn was forked from [Quixotix/PHP-PayPal-IPN](https://github.com/Quixotix/PHP-PayPal-IPN) (v2.1.0).
+Changes between versions are documented in the [CHANGELOG.md](CHANGELOG.md).
+
+This library was forked from [WadeShuler/PHP-PayPal-IPN](https://github.com/WadeShuler/PHP-PayPal-IPN) which in turn was forked from [Quixotix/PHP-PayPal-IPN](https://github.com/Quixotix/PHP-PayPal-IPN).
 
 Below is a brief summary of their differences and reasons for forking:
 
 1. Quixotix's version is no longer maintained and contains various critical issues.
 2. WadeShuler's version was meant to address all issues of the original version, however, several breaking changes have been made unnecessarily.
 3. The goal of this version is to keep the library operational by fixing any issues, while trying to retain backward compatibility with the original version.
-
 
 License
 -------
