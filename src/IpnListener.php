@@ -279,11 +279,17 @@ class IpnListener
 
 		// Current date and POST url
 		$r .= $line.$nl;
-		$r .= '['.date('m/d/Y g:i A').'] - '.$this->getPostUri();
-		if ($this->use_curl)
-			$r .= ' (curl)'.$nl;
-		else
-			$r .= ' (fsockopen)'.$nl;
+		$r .= date('r').$nl;
+		$r .= $this->getPostUri().$nl;
+
+		// Used options
+		$options = array();
+		$options[] = ($this->use_curl ? 'curl' : 'fsockopen');
+		$options[] = ($this->use_sandbox ? 'sandbox' : 'live');
+		$options[] = ($this->verify_ssl ? 'verify ssl' : 'no verify ssl');
+		$options[] = ($this->follow_location ? 'follow' : 'no follow');
+		$options[] = 'timeout '.$this->timeout;
+		$r .= '('.implode(', ', $options).')'.$nl;
 
 		// HTTP response
 		$r .= $line.$nl;
