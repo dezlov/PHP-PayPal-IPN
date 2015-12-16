@@ -136,7 +136,7 @@ class IpnListener
 		$this->response = curl_exec($ch);
 		$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-		if ($this->response === false || $this->response_status == '0')
+		if (($this->response === false) || ($this->response_status == '0'))
 		{
 			$errno = curl_errno($ch);
 			$errstr = curl_error($ch);
