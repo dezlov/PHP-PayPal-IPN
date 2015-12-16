@@ -47,7 +47,7 @@ class IpnListener
 	public $timeout = 30;
 
 	/**
-	 * If true, enable SSL certification validation when using cURL
+	 * If true, enable SSL certificate validation of PayPal server when using cURL.
 	 *
 	 * @var boolean
 	 */
@@ -61,6 +61,15 @@ class IpnListener
 	 */
 	public $requirePostMethod = true;
 
+	/**
+	 * User defined path to Certificate Authority (CA) bundle file. It is used
+	 * when SSL certificate validation is enabled via <code>$verify_ssl</code>.
+	 * If NULL, default path is used as defined by <code>CERT_BUNDLE_DEFAULT</code>.
+	 *
+	 * @var string|null
+	 */
+	public $certificateBundlePath = null;
+
 	private $postData = array();
 	private $rawPostData = null;
 	private $post_uri = '';
@@ -69,6 +78,26 @@ class IpnListener
 
 	const PAYPAL_HOST = 'www.paypal.com';
 	const SANDBOX_HOST = 'www.sandbox.paypal.com';
+
+	/**
+	 * Default path to Certificate Authority (CA) bundle file.
+	 * Path is relative to the root of this library.
+	 */
+	const CERT_BUNDLE_DEFAULT = '/cert/api_cert_chain.crt';
+
+	/**
+	 * Get path to Certificate Authority (CA) bundle file.
+	 * If user supplied path is not defined, uses <code>CERT_BUNDLE_DEFAULT</code>.
+	 * 
+	 * @return string
+	 */
+	protected function getCertificateBundlePath()
+	{
+		if ($this->certificateBundlePath !== null)
+			return $this->certificateBundlePath;
+		else
+			return dirname(dirname(__FILE__)).self::CERT_BUNDLE_DEFAULT;
+	}
 
 	/**
 	 *  Post Back Using cURL
@@ -93,7 +122,7 @@ class IpnListener
 		{
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-			curl_setopt($ch, CURLOPT_CAINFO, dirname(dirname(__FILE__)) . '/cert/api_cert_chain.crt');
+			curl_setopt($ch, CURLOPT_CAINFO, $this->getCertificateBundlePath());
 		}
 
 		curl_setopt($ch, CURLOPT_URL, $uri);
