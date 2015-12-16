@@ -1,5 +1,5 @@
 {
-	"name": "dezlov/PHP-PayPal-IPN",
+	"name": "dezlov/php-paypal-ipn",
 	"description": "A class for handling Instant Payment Notifications (IPN) from PayPal.",
 	"homepage": "https://github.com/dezlov/PHP-PayPal-IPN",
 	"keywords": ["paypal", "ipn", "php"],
