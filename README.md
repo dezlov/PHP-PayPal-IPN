@@ -24,6 +24,8 @@ The source code contains PHPDoc style comments which essentially provide a funct
 
 Example scripts ranging from basic IPN verification to a complete order processing chain, and a sample report as returned by the `getTextReport()` method, can be found in the [Examples](examples/) folder.
 
+This package is available via [Composer](https://getcomposer.org/) at [dezlov/php-paypal-ipn](https://packagist.org/packages/dezlov/php-paypal-ipn).
+
 ### Getting Started
 
 You should understand how the IPN process works conceptually and you should understand when and why you would be using IPN. Reading the [PayPal Instant Payment Notification Guide][1] is a good place to start.
