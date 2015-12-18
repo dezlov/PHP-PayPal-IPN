@@ -2,7 +2,7 @@
 
 This change log contains the highlights of major changes. For details on all finer changes please check the commits history.
 
-## Latest development
+## v3.0.0
 
 - Added a sample report.
   - As returned by the `getTextReport()` method.
